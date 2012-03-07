@@ -1,15 +1,16 @@
-public class Nation extends VerletParticle2D {
+public class Nation {
   Hashtable trait = new Hashtable();
   int uniqueID, security, innovation, jobOpportunity, immigrationPolicy,lifeExpectancy,
   education, sanitation, standardOfLiving,pollution,biodiversity,crime,politicalFreedom,nutrition;
+  private int xPos;
+  private int yPos;
   String nameNation;
   int[] colorBaseArray = new int[3]; // need base colors for each nation
   int[][] colorBaseArraySquares = new int[numNationCharacteristics][3];
-  float[][] traitPosArray = new float[numNationCharacteristics][2]; // save x,y for all characteristics
+  int[][] traitPosArray = new int[numNationCharacteristics][2]; // save x,y for all characteristics
   
-  Nation(int _uniqueID, String _nameNation, float x, float y, int _security, int _innovation, int _jobOpportunity, int _immigrationPolicy,
+  Nation(int _uniqueID, String _nameNation, int _xPos, int _yPos, int _security, int _innovation, int _jobOpportunity, int _immigrationPolicy,
   int _lifeExpectancy, int _education, int _sanitation, int _standardOfLiving, int _pollution, int _biodiversity, int _crime, int _politicalFreedom, int _nutrition) {
-    super(x, y);
     trait.put("security", _security);
     trait.put("innovation", _innovation);
     trait.put("jobOpportunity", _jobOpportunity);
@@ -38,6 +39,8 @@ public class Nation extends VerletParticle2D {
     crime = _crime;
     politicalFreedom = _politicalFreedom;
     nutrition = _nutrition;
+    xPos = _xPos;
+    yPos = _yPos;
     
     // each Nation object has unique color base
     for (int j=0;j<3;j++) {
@@ -46,16 +49,16 @@ public class Nation extends VerletParticle2D {
     
     colorMode(HSB);
     for (int j=0;j<numNationCharacteristics;j++) {
-      colorBaseArraySquares[j][0] = 50; //abs(colorBaseArray[0]+(int)random(-70,70)); 
-      colorBaseArraySquares[j][1] = 50; //abs(colorBaseArray[1]+(int)random(-30,30)); 
-      colorBaseArraySquares[j][2] = 50; //abs(colorBaseArray[1]+(int)random(-50,50)); 
+      colorBaseArraySquares[j][0] = abs(colorBaseArray[0]+(int)random(-70,70)); 
+      colorBaseArraySquares[j][1] = abs(colorBaseArray[1]+(int)random(-30,30)); 
+      colorBaseArraySquares[j][2] = abs(colorBaseArray[1]+(int)random(-50,50)); 
     }
     colorMode(RGB);
 
     // generates random x,y standard for all the characteristics
     for (int i=0;i<numNationCharacteristics;i++) {
-      traitPosArray[i][0] = x+random(-150, 150);
-      traitPosArray[i][1] = y+random(-150, 150);
+      traitPosArray[i][0] = xPos+int(random(-150, 150));
+      traitPosArray[i][1] = yPos+int(random(-150, 150));
     }
   }
   
@@ -78,19 +81,19 @@ public class Nation extends VerletParticle2D {
     // displays main rect for each Nation
     fill(colorBaseArray[0],colorBaseArray[1],colorBaseArray[2]);
     rectMode(CENTER);
-    rect(x,y,nationBoxSize,nationBoxSize);
+    rect(xPos,yPos,nationBoxSize,nationBoxSize);
     rectMode(CORNER);
     fill(255,255,0,200);
     textSize(globalLabelS);
-    text(nameNation, x+15, y+15);
+    text(nameNation, xPos+15, yPos+15);
   } // display for Nation
   
-  public float getXPos() {
-    return x;
+  public int getXPos() {
+    return xPos;
   }
   
-  public float getYPos() {
-    return y;
+  public int getYPos() {
+    return yPos;
   }
   
 }

@@ -24,17 +24,10 @@ VerletPhysics2D physics;
 
 long iterationCount = 0; // # of draw()s
 int currentYear = 0; // keeps track of years since sketch start
-int springArrayGlobalCount = 0;
 
+ArrayList people = new ArrayList;
 Person person[]; // init Person object array
-VerletConstrainedSpring2D springArray[];
-VerletConstrainedSpring2D springArrayGlobal[];
-VerletConstrainedSpring2D nationSpringArray[];
-VerletConstrainedSpring2D religionSpringArray[];
-VerletConstrainedSpring2D newPersonSpringArray[];
-VerletConstrainedSpring2D newBirthSpringArray[];
-VerletConstrainedSpring2D newBirthNationSpringArray[];
-VerletConstrainedSpring2D newBirthReligionSpringArray[];
+VerletSpring2D springArray[];
 Person god; // init God
 Nation nation[];
 Religion religion[];
@@ -49,8 +42,8 @@ boolean toggleNoLoop = false; // toggles space bar for stopping/starting loop
 int numCharacteristics = 31; // total characteristics per person (see Person class)
 int numPeople = 5; // initialize starting # of ppl & counter for names of new people
 int populationSize = 5; // size of current population
-int equilibriumPopulation = 20; // so babies will be born after people die, keeps population fresh up to maxPeople
-int maxPeople = 80; // so it won't go nuts; don't forget to limit and/or raise this when needed
+int equilibriumPopulation = 40; // so babies will be born after people die, keeps population fresh up to maxPeople
+int maxPeople = 90; // so it won't go nuts; don't forget to limit and/or raise this when needed
 int maxReproductiveAge = 50; // how old a woman can be and still have children
 int deathAgeBegin = 60; // when death functions kick in to see if people will die
 int flirter1, flirter2; // picks random flirters
@@ -79,11 +72,6 @@ int religionNodeSize=200; // size of nation blocs
 int religionBoxSize = 10;
 int religionSpacing = 200; // max distance traits can be from religion
 
-boolean updatePhysics = true;
-
-float godGravity = 0.001;
-int godRL = height/2;
-
 int[][] colorArray = new int[numCharacteristics][3]; // need colors for all characteristics
 int[] characteristicsArray = new int[numCharacteristics];
 
@@ -106,10 +94,15 @@ boolean geneticMap = true;
 void setup() {
   size(1200, 700);
   smooth();
-  
+
+  person = new Person[maxPeople];
+  nation = new Nation[maxNations];
+  religion = new Religion[maxReligions];
+  springArray = new VerletSpring2D[maxPeople];
+
   // Initialize the physics
   physics=new VerletPhysics2D();
-  physics.addBehavior(new GravityBehavior(new Vec2D(0, 0.0)));
+  physics.addBehavior(new GravityBehavior(new Vec2D(0, 0.5)));
 
   // This is the center of the world
   Vec2D center = new Vec2D(width/2, height/2);
@@ -117,59 +110,54 @@ void setup() {
   Vec2D extent = new Vec2D(width/2, height/2);
 
   // Set the world's bounding box
-  physics.setWorldBounds(Rect.fromCenterExtent(center, extent));
-  //physics.setWorldBounds(new Rect(20, 20, width, height));
+  //physics.setWorldBounds(Rect.fromCenterExtent(center, extent));
+   physics.setWorldBounds(new Rect(0+20,0+20,width,height));
 
-  person = new Person[maxPeople];
-  nation = new Nation[maxNations];
-  religion = new Religion[maxReligions];
-  springArrayGlobal = new VerletConstrainedSpring2D[500];
-  springArray = new VerletConstrainedSpring2D[maxPeople];
-  newPersonSpringArray = new VerletConstrainedSpring2D[500];
-  newBirthSpringArray = new VerletConstrainedSpring2D[200];
-  newBirthNationSpringArray = new VerletConstrainedSpring2D[200];
-  newBirthReligionSpringArray = new VerletConstrainedSpring2D[200];
-  nationSpringArray = new VerletConstrainedSpring2D[100];
-  religionSpringArray = new VerletConstrainedSpring2D[100];
+  // #PeopleChange init all person objects & nations
+  for (int i=0;i<maxPeople;i++) {
+    person[i] = new Person(i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "", "", 
+    -1, -1, -1, 0, 0, 0, 0, 0, 0);
+    physics.addParticle(person[i]);
+  }
+  for (int i=0;i<maxNations;i++) {
+    nation[i] = new Nation(i, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  }
+  for (int i=0;i<maxReligions;i++) {
+    religion[i] = new Religion(i, "", 0, 0, 0, 0, 0, 0);
+  }
 
   // who art in Heaven
-  god = new Person(-1, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0, 0, 10, 0, 10, 10, 10, 10, 10, 10, 10, 10, "God", "null", -2, -2, -1, 0, -1, 0, 1, width/2, height/2);
+  god = new Person(-1, 0, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0, 0, 10, 0, 10, 10, 10, 10, 10, 10, 10, 10, "God", "null", -2, -2, -1, 0, -1, 0, 1, 1100, 600);
+
+  physics.addParticle(god);
+  // Make a spring connecting both Particles
+  VerletSpring2D spring = new VerletSpring2D(person[0], person[1], 80, 0.01);
+  for (int k=0;k<maxPeople;k++) {
+    springArray[k] = new VerletSpring2D(god, person[k], 80, 0.01);
+    physics.addSpring(springArray[k]);
+  }
+  physics.addSpring(spring);
 
   // #PeopleChange
-  nation[0] = new Nation(0, "USA", 100, 100, (int)random(70, 80), (int)random(80, 100), (int)random(60, 80), (int)random(40, 60), (int)random(70, 80), 
+  nation[0] = new Nation(0, "USA", 200, 200, (int)random(70, 80), (int)random(80, 100), (int)random(60, 80), (int)random(40, 60), (int)random(70, 80), 
   (int)random(70, 80), (int)random(80, 90), (int)random(70, 80), (int)random(40, 50), (int)random(70, 90), (int)random(30, 40), (int)random(70, 80), (int)random(70, 80));
-  nation[1] = new Nation(1, "EU", 500, 600, (int)random(40, 50), (int)random(60, 70), (int)random(50, 60), (int)random(50, 60), (int)random(90, 100), 
+  nation[1] = new Nation(1, "EU", 500, 500, (int)random(40, 50), (int)random(60, 70), (int)random(50, 60), (int)random(50, 60), (int)random(90, 100), 
   (int)random(90, 100), (int)random(80, 100), (int)random(80, 90), (int)random(80, 100), (int)random(50, 60), (int)random(70, 90), (int)random(90, 100), (int)random(90, 100));
-  nation[2] = new Nation(2, "China", 100, 600, (int)random(70, 80), (int)random(40, 50), (int)random(40, 50), (int)random(30, 40), (int)random(60, 70), 
+  nation[2] = new Nation(2, "China", 200, 500, (int)random(70, 80), (int)random(40, 50), (int)random(40, 50), (int)random(30, 40), (int)random(60, 70), 
   (int)random(60, 70), (int)random(60, 70), (int)random(40, 60), (int)random(10, 20), (int)random(30, 40), (int)random(50, 60), (int)random(20, 30), (int)random(40, 60));
   nation[3] = new Nation(3, "South America", 800, 200, (int)random(20, 40), (int)random(30, 40), (int)random(30, 40), (int)random(40, 50), (int)random(60, 70), 
   (int)random(50, 60), (int)random(30, 40), (int)random(50, 60), (int)random(20, 30), (int)random(70, 80), (int)random(60, 70), (int)random(50, 60), (int)random(50, 60));
-  nation[4] = new Nation(4, "Africa", 1100, 600, (int)random(10, 30), (int)random(20, 30), (int)random(20, 30), (int)random(20, 30), (int)random(20, 30), 
+  nation[4] = new Nation(4, "Africa", 900, 600, (int)random(10, 30), (int)random(20, 30), (int)random(20, 30), (int)random(20, 30), (int)random(20, 30), 
   (int)random(20, 30), (int)random(10, 30), (int)random(20, 30), (int)random(20, 30), (int)random(70, 80), (int)random(30, 50), (int)random(30, 50), (int)random(20, 40));
 
-  religion[0] = new Religion(0, "Buddhism", 20, 400, (int)random(20, 40), (int)random(20, 30), (int)random(0, 10), (int)random(20, 30));
+  religion[0] = new Religion(0, "Buddhism", 100, 100, (int)random(20, 40), (int)random(20, 30), (int)random(0, 10), (int)random(20, 30));
   religion[1] = new Religion(1, "Christianity", 400, 200, (int)random(50, 60), (int)random(80, 100), (int)random(60, 80), (int)random(60, 70));
-  religion[2] = new Religion(2, "Confucianism", 50, 500, (int)random(30, 40), (int)random(80, 100), (int)random(0, 20), (int)random(20, 40));
+  religion[2] = new Religion(2, "Confucianism", 100, 600, (int)random(30, 40), (int)random(80, 100), (int)random(0, 20), (int)random(20, 40));
   religion[3] = new Religion(3, "Hinduism", 300, 400, (int)random(70, 80), (int)random(80, 100), (int)random(90, 100), (int)random(60, 70));
   religion[4] = new Religion(4, "Islam", 650, 500, (int)random(70, 80), (int)random(80, 100), (int)random(60, 80), (int)random(60, 70));
   religion[5] = new Religion(5, "Judaism", 900, 400, (int)random(90, 100), (int)random(50, 70), (int)random(60, 80), (int)random(20, 40));
-  religion[6] = new Religion(6, "Taoism", 1100, 300, (int)random(20, 40), (int)random(20, 40), (int)random(10, 30), (int)random(10, 30));
+  religion[6] = new Religion(6, "Taoism", 1000, 300, (int)random(20, 40), (int)random(20, 40), (int)random(10, 30), (int)random(10, 30));
 
-  for (int i=0;i<numNations;i++) {
-    physics.addParticle(nation[i]);
-    nation[i].lock();
-  }
-  
-  for (int i=0;i<numReligions;i++) {
-    physics.addParticle(religion[i]);
-    religion[i].lock();
-  }
-
-  // #PeopleChange init all person objects & nations
-  for (int i=5;i<maxPeople;i++) {
-    person[i] = new Person(i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "", "", 
-    -1, -1, -1, 0, 0, 0, 0, width/2, height/2);
-  }
 
   // #PeopleChange create some Adams and Eves and Sumerians
   person[0] = new Person(0, 0, 7, 5, 2, 6, 10, 8, 1, 6, 10, 10, 7, 6, 8, 6, 180, 67, 10, 80, 10, 10, 9, 8, 5, 2, 1, 
@@ -195,48 +183,6 @@ void setup() {
   (int)random(1, 10), (int)random(1, 10), (int)random(1, 10), "person5", "female", -1, -1, 0, 0, 4, 0, 0, 
   randomX(0), randomX(0));
 
-  physics.addParticle(god);
-  god.lock();
-  
-  // #PeopleChange init all person objects & nations
-  for (int i=0;i<numPeople;i++) {
-    physics.addParticle(person[i]);
-  }
-  
-  for (int k=0;k<numPeople;k++) {
-    springArray[k] = new VerletConstrainedSpring2D(god, person[k], godRL, godGravity);
-    physics.addSpring(springArray[k]);
-  }
-  
-  int z=0;
-    for (int k=0;k<numPeople-1;k++) {
-      if (z < numPeople) {
-        for (int l=0;l<numPeople;l++) {
-          newPersonSpringArray[z] = new VerletConstrainedSpring2D(person[l], person[k], int(random(250, 650)), random(0.001, 0.003));
-          physics.addSpring(newPersonSpringArray[z]);
-          z++;
-        }
-      }
-    }
-  
-  int nationSpringArrayCount = 0;
-  for (int i=0;i<numPeople;i++) {
-    for (int j=0;j<numNations;j++) {
-      nationSpringArray[nationSpringArrayCount] = new VerletConstrainedSpring2D(nation[j], person[i], int(random(200, 600)), random(0.001,0.002));
-      physics.addSpring(nationSpringArray[nationSpringArrayCount]);
-      nationSpringArrayCount++;
-    }
-  }
-  
-  int religionSpringArrayCount = 0;
-  for (int i=0;i<numPeople;i++) {
-    for (int j=0;j<numReligions;j++) {
-      religionSpringArray[religionSpringArrayCount] = new VerletConstrainedSpring2D(religion[j], person[i], int(random(100, 200)), random(0.0005, 0.0015));
-      physics.addSpring(religionSpringArray[religionSpringArrayCount]);
-      religionSpringArrayCount++;
-    }
-  }
-
   // generates random color standard for all the person characteristics
   for (int i=0;i<numCharacteristics;i++) {
     for (int j=0;j<3;j++) {
@@ -246,8 +192,8 @@ void setup() {
 }
 
 // calc random x position relative to person's nationality
-float randomX(int _nation) {
-  float randomX = nation[_nation].getXPos() + random(-nationSpacing, nationSpacing);
+int randomX(int _nation) {
+  int randomX = nation[_nation].getXPos() + int(random(-nationSpacing, nationSpacing));
   if (randomX > width) { 
     randomX = width + (width + randomX - 30);
   }
@@ -255,8 +201,8 @@ float randomX(int _nation) {
 }
 
 // calc random y position relative to person's nationality
-float randomY(int _nation) {
-  float randomY = nation[_nation].getYPos() + random(-nationSpacing, nationSpacing);
+int randomY(int _nation) {
+  int randomY = nation[_nation].getYPos() + int(random(-nationSpacing, nationSpacing));
   if (randomY > height) { 
     randomY = height + (height + randomY - 30);
   }
@@ -264,13 +210,6 @@ float randomY(int _nation) {
 }
 
 void draw() {
-
-  if (updatePhysics == true) {
-  // Update the physics world
-  physics.update();
-  }
-
-
 
   // determines speed of time, and ages people each "year" if they're alive
   if (iterationCount % yearLength == 0) {
@@ -287,6 +226,13 @@ void draw() {
     fill(255);
     textSize(globalLabelS);
 
+    // Update the physics world
+    physics.update();
+    
+    for (int l=0;l<maxPeople;l++) {
+      line(person[l].xPos, person[l].yPos, god.xPos, god.yPos);
+    }
+
     drawFuncs.drawNations();
     drawFuncs.drawReligions();
     drawFuncs.drawLegend();
@@ -296,6 +242,12 @@ void draw() {
     drawFuncs.drawPopUpBoxReligions();
     drawFuncs.drawInterface();
 
+    if (mousePressed) {
+      god.lock();
+      person[0].xPos = mouseX;
+      person[0].yPos = mouseY;
+      god.unlock();
+    }
   }
   else { // if user is looking at stats/chromosomes
     background(0);
@@ -345,14 +297,6 @@ void keyPressed() {
       toggleNoLoop = false;
     }
   }
-  if (key == 'u') {
-    if (updatePhysics == true) {
-      updatePhysics = false;
-    }
-    else {
-      updatePhysics = true;
-    }
-  }
 }
 
 void mouseReleased() {
@@ -389,4 +333,3 @@ void mouseReleased() {
     karyogramPush -= scrollingAmount;
   }
 }
-

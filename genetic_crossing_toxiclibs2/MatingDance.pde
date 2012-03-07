@@ -101,38 +101,6 @@ public class MatingDance {
     person[numPeople].talentSports = punnettSquare(person[_parent1].talentSports, person[_parent2].talentSports);
 
     person[numPeople] = newPerson;
-    physics.addParticle(person[numPeople]);
-    springArray[numPeople] = new VerletConstrainedSpring2D(god, person[numPeople], godRL, godGravity);
-    springArrayGlobal[springArrayGlobalCount] = new VerletConstrainedSpring2D(person[_parent2], person[numPeople], 200, 0.005);
-    physics.addSpring(springArrayGlobal[springArrayGlobalCount]);
-    springArrayGlobalCount++;
-    springArrayGlobal[springArrayGlobalCount] = new VerletConstrainedSpring2D(person[_parent1], person[numPeople], 200, 0.005);
-    physics.addSpring(springArrayGlobal[springArrayGlobalCount]);
-    springArrayGlobalCount++;
-    
-    
-    
-
-    int z=0;
-    for (int k=0;k<numPeople;k++) {
-      if (z < numPeople) {
-          newBirthSpringArray[z] = new VerletConstrainedSpring2D(person[numPeople], person[k], int(random(450, 550)), random(0.001, 0.003));
-          physics.addSpring(newBirthSpringArray[z]);
-          z++;
-      }
-    }
-    
-    for (int k=0;k<numNations;k++) {
-          newBirthNationSpringArray[k] = new VerletConstrainedSpring2D(nation[k], person[numPeople], int(random(400, 600)), random(0.001,0.002));
-          physics.addSpring(newBirthNationSpringArray[k]);
-
-    }
-    
-    for (int k=0;k<numReligions;k++) {
-          newBirthReligionSpringArray[k] = new VerletConstrainedSpring2D(religion[k], person[numPeople], int(random(200, 300)), random(0.0005, 0.0015));
-          physics.addSpring(newBirthReligionSpringArray[k]);
-    }
-
     person[_parent1].children++;
     person[_parent2].children++;
     numPeople++;

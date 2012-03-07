@@ -10,10 +10,10 @@ public class DrawFuncs {
       int strength = (int)Float.parseFloat(person[i].trait.get("strength").toString());
       if (strength != 0) {
         person[i].display(50);
-        /* person[i].x = person[i].x + calcCultureMoveX(i, person[i].x);
-         int finalY = calcCultureMoveY(i, person[i].y);
-         int speedY = ceil(abs(person[i].y - finalY) / 20);
-         if (person[i].y < finalY) person[i].y = person[i].y + speedY;
+        /* person[i].xPos = person[i].xPos + calcCultureMoveX(i, person[i].xPos);
+         int finalY = calcCultureMoveY(i, person[i].yPos);
+         int speedY = ceil(abs(person[i].yPos - finalY) / 20);
+         if (person[i].yPos < finalY) person[i].yPos = person[i].yPos + speedY;
          */
         drawFamilyLines(i, 25);
         drawFuncs.drawHappiness(i);
@@ -26,33 +26,33 @@ public class DrawFuncs {
   void drawFamilyLines(int i, int lineOpacity) { // draw familial connection lines
 
     stroke(255, 255, 255, lineOpacity);
-    line(god.x, god.y, person[i].x, person[i].y);
+    line(god.xPos, god.yPos, person[i].xPos, person[i].yPos);
 
     if (person[i].parent1 != -1) {
       stroke(0, 0, 255, lineOpacity);
-      line(person[person[i].parent1].x, person[person[i].parent1].y, person[i].x, person[i].y);
-      line(person[person[i].parent2].x, person[person[i].parent2].y, person[i].x, person[i].y);
+      line(person[person[i].parent1].xPos, person[person[i].parent1].yPos, person[i].xPos, person[i].yPos);
+      line(person[person[i].parent2].xPos, person[person[i].parent2].yPos, person[i].xPos, person[i].yPos);
       stroke(0, 255, 0, lineOpacity);
-      line(person[person[i].parent1].x, person[person[i].parent1].y, person[person[i].parent2].x, person[person[i].parent2].y);
+      line(person[person[i].parent1].xPos, person[person[i].parent1].yPos, person[person[i].parent2].xPos, person[person[i].parent2].yPos);
     }
 
     // nation connection lines
     stroke(255, 255, 0, lineOpacity);
     switch (person[i].nationality) {
     case 0:
-      line(person[i].x, person[i].y, nation[0].x, nation[0].y);
+      line(person[i].xPos, person[i].yPos, nation[0].xPos, nation[0].yPos);
       break;
     case 1:
-      line(person[i].x, person[i].y, nation[1].x, nation[1].y);
+      line(person[i].xPos, person[i].yPos, nation[1].xPos, nation[1].yPos);
       break;
     case 2:
-      line(person[i].x, person[i].y, nation[2].x, nation[2].y);
+      line(person[i].xPos, person[i].yPos, nation[2].xPos, nation[2].yPos);
       break;
     case 3:
-      line(person[i].x, person[i].y, nation[3].x, nation[3].y);
+      line(person[i].xPos, person[i].yPos, nation[3].xPos, nation[3].yPos);
       break;
     case 4:
-      line(person[i].x, person[i].y, nation[4].x, nation[4].y);
+      line(person[i].xPos, person[i].yPos, nation[4].xPos, nation[4].yPos);
       break;
     }
 
@@ -60,25 +60,25 @@ public class DrawFuncs {
     stroke(3, 255, 181, lineOpacity);
     switch (person[i].religion) {
     case 0:
-      line(person[i].x, person[i].y, religion[0].x, religion[0].y);
+      line(person[i].xPos, person[i].yPos, religion[0].xPos, religion[0].yPos);
       break;
     case 1:
-      line(person[i].x, person[i].y, religion[1].x, religion[1].y);
+      line(person[i].xPos, person[i].yPos, religion[1].xPos, religion[1].yPos);
       break;
     case 2:
-      line(person[i].x, person[i].y, religion[2].x, religion[2].y);
+      line(person[i].xPos, person[i].yPos, religion[2].xPos, religion[2].yPos);
       break;
     case 3:
-      line(person[i].x, person[i].y, religion[3].x, religion[3].y);
+      line(person[i].xPos, person[i].yPos, religion[3].xPos, religion[3].yPos);
       break;
     case 4:
-      line(person[i].x, person[i].y, religion[4].x, religion[4].y);
+      line(person[i].xPos, person[i].yPos, religion[4].xPos, religion[4].yPos);
       break;
     case 5:
-      line(person[i].x, person[i].y, religion[5].x, religion[5].y);
+      line(person[i].xPos, person[i].yPos, religion[5].xPos, religion[5].yPos);
       break;
     case 6:
-      line(person[i].x, person[i].y, religion[6].x, religion[6].y);
+      line(person[i].xPos, person[i].yPos, religion[6].xPos, religion[6].yPos);
       break;
     }
     stroke(0);
@@ -128,7 +128,7 @@ public class DrawFuncs {
     for (int i=0;i<numPeople;i++) {
       int strength = (int)Float.parseFloat(person[i].trait.get("strength").toString());
       if (strength != 0) {
-        if (mouseX >= person[i].x-(int(personNodeSize/2)) && mouseX <= person[i].x+(int(personNodeSize/2)) && mouseY >= person[i].y-(int(personNodeSize/2)) && mouseY <= person[i].y+(int(personNodeSize/2))) {
+        if (mouseX >= person[i].xPos-(int(personNodeSize/2)) && mouseX <= person[i].xPos+(int(personNodeSize/2)) && mouseY >= person[i].yPos-(int(personNodeSize/2)) && mouseY <= person[i].yPos+(int(personNodeSize/2))) {
           drawFamilyLines(i, 255);
           person[i].display(255);
           if (mousePressed) {
@@ -194,7 +194,7 @@ public class DrawFuncs {
     for (int i=0;i<numNations;i++) {
       int strength = (int)Float.parseFloat(nation[i].trait.get("security").toString());
       if (strength != 0) {
-        if ((mouseX >= nation[i].x-int(nationBoxSize/2)) && (mouseX <= nation[i].x+int(nationBoxSize/2)) && (mouseY >= nation[i].y-int(nationBoxSize/2)) && (mouseY <= nation[i].y+int(nationBoxSize/2))) {
+        if ((mouseX >= nation[i].xPos-int(nationBoxSize/2)) && (mouseX <= nation[i].xPos+int(nationBoxSize/2)) && (mouseY >= nation[i].yPos-int(nationBoxSize/2)) && (mouseY <= nation[i].yPos+int(nationBoxSize/2))) {
           nation[i].display(150);
           textSize(14);
           int drawBoxX = mouseX;
@@ -235,7 +235,7 @@ public class DrawFuncs {
     for (int i=0;i<numReligions;i++) {
       int commercial = (int)Float.parseFloat(religion[i].trait.get("commercial").toString());
       if (commercial != 0) {
-        if ((mouseX >= religion[i].x) && (mouseX <= religion[i].x+religionBoxSize) && (mouseY >= religion[i].y) && (mouseY <= religion[i].y+religionBoxSize)) {
+        if ((mouseX >= religion[i].xPos) && (mouseX <= religion[i].xPos+religionBoxSize) && (mouseY >= religion[i].yPos) && (mouseY <= religion[i].yPos+religionBoxSize)) {
           religion[i].display(150);
           textSize(14);
           int drawBoxX = mouseX;
@@ -541,7 +541,7 @@ public class DrawFuncs {
       happinessText = "happy";
     }
     fill(happinessColor,200);
-    text(happinessText, person[i].x+15, person[i].y+34);
+    text(happinessText, person[i].xPos+15, person[i].yPos+34);
   }
 
   // didn't implement but maybe will be useful
@@ -554,7 +554,7 @@ int calcCultureMoveX(int personID, int personX) {
    _influence = Float.parseFloat(person[personID].trait.get("intelligence").toString()) - Float.parseFloat(nation[i].trait.get("innovation").toString());
    int _absInfluence = abs(int(_influence));
    if (_absInfluence <= 10) {
-   totalMoveX = nation[i].x - personX;
+   totalMoveX = nation[i].xPos - personX;
    totalMoveX = ceil(totalMoveX / 20);
    }
    }
@@ -569,7 +569,7 @@ int calcCultureMoveX(int personID, int personX) {
    int _absInfluence = abs(int(_influence));
    System.out.println(_absInfluence);
    if (_absInfluence <= 1) {
-   totalMoveY = (nation[i].y + personY) / 2;
+   totalMoveY = (nation[i].yPos + personY) / 2;
    }
    }
    return totalMoveY;

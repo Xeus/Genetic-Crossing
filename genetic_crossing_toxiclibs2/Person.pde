@@ -1,13 +1,13 @@
 class Person extends VerletParticle2D {
   Hashtable trait = new Hashtable();
   String namePerson, gender;
-  int parent1, parent2, uniqueID, pWeight, pHeight, age, mbti, lastBaby,
+  int parent1, parent2, uniqueID, xPos, yPos, pWeight, pHeight, age, mbti, lastBaby,
   nationality, religion, children,strength,intelligence,wisdom,charisma,stamina,wit,
   humor,education,creativity,responsibility,discipline,honesty,religiosity,entrepreneurialism,
   appearance,money,gracefulness,stress,health,luck,talentMath,talentArt,talentSports, happiness, employed;
   int[] colorBaseArray = new int[3]; // need base colors for each person
-  float[][] traitPosArray = new float[numCharacteristics][2]; // save x,y for all characteristics
-  float[][] traitPosArray_orig = new float[numCharacteristics][2]; // original copy of coords
+  int[][] traitPosArray = new int[numCharacteristics][2]; // save x,y for all characteristics
+  int[][] traitPosArray_orig = new int[numCharacteristics][2]; // original copy of coords
   boolean alive;
 
   // constructor
@@ -15,8 +15,12 @@ class Person extends VerletParticle2D {
   int _intelligence, int _wisdom, int _charisma, int _stamina, int _wit, int _humor, int _pWeight, int _pHeight,
   int _education, int _age, int _creativity, int _responsibility, int _discipline, int _honesty, int _religiosity,
   int _entrepreneurialism, int _appearance, int _money, String _namePerson, String _gender, int _parent1,
-  int _parent2, int _nationality, int lastBaby, int _religion, int _children, int _employed, float x, float y) {
-    super(x, y);
+  int _parent2, int _nationality, int lastBaby, int _religion, int _children, int _employed, int _xPos, int _yPos) {
+    
+    super(_xPos, _yPos);
+    xPos = _xPos;
+    yPos = _yPos;
+    
     trait.put("strength", _strength);
     trait.put("intelligence", _intelligence);
     trait.put("wisdom", _wisdom);
@@ -108,7 +112,7 @@ class Person extends VerletParticle2D {
     else {
       fill(#BCBCBC, setOpacity);
     }
-    ellipse(x, y, 70, 70);
+    ellipse(xPos, yPos, 70, 70);
 
     // loads circle diameters from hashtable, iterates thru all characteristics
     int i = 0;
@@ -128,8 +132,8 @@ class Person extends VerletParticle2D {
       
       // generates random position for all the characteristics
     for (int j=0;j<numCharacteristics;j++) {
-      traitPosArray[j][0] = traitPosArray_orig[j][0] + x;
-      traitPosArray[j][1] = traitPosArray_orig[j][1] + y;
+      traitPosArray[j][0] = traitPosArray_orig[j][0] + xPos;
+      traitPosArray[j][1] = traitPosArray_orig[j][1] + yPos;
     }
 
       ellipse(traitPosArray[i][0], traitPosArray[i][1], diam, diam);
@@ -144,7 +148,7 @@ class Person extends VerletParticle2D {
     else {
       fill(#BCBCBC, setOpacity);
     }
-    ellipse(x, y, personNodeSize, personNodeSize); // overall rating, in middle
+    ellipse(xPos, yPos, personNodeSize, personNodeSize); // overall rating, in middle
     textSize(globalLabelS-1);
     int _pHeight = round(pHeight * 5 * age / 100);
     int _pWeight = round(pWeight * 2 * age / 100);
@@ -154,11 +158,11 @@ class Person extends VerletParticle2D {
     int pInches = _pHeight % 12;
     fill(255,200);
     if (namePerson == "God") {
-      text(namePerson, x+15, y+15);
+      text(namePerson, xPos+15, yPos+15);
     }
     else {
-      text(namePerson + " (" + gender + ", " + age + "yo, " + getFuncs.getNationality(nationality) + ")", x+15, y+15);
-      text(_pWeight + "lbs, " + pFeet + "'" + pInches + "\"", x+15, y+25);
+      text(namePerson + " (" + gender + ", " + age + "yo, " + getFuncs.getNationality(nationality) + ")", xPos+15, yPos+15);
+      text(_pWeight + "lbs, " + pFeet + "'" + pInches + "\"", xPos+15, yPos+25);
     }
 
   } // display for Person

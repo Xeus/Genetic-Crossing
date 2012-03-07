@@ -1,0 +1,12 @@
+Midterm project for Professor Shiffman's Nature of Code class.
+
+Ben Turner, NYU-ITP 2012
+
+Unlocked VerletPhysics2D into my mini-simulation/universe of people,
+nations, and religions.  The Person objects now have springs connecting
+them to their nations, religions, parents, and other people.
+
+TODO:
+-vary rest lengths based on strength of attractions/closeness/characteristics
+-re-write with ArrayList
+-improve framerate with streamlining
