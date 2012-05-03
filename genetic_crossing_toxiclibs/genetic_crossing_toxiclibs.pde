@@ -209,15 +209,15 @@ void setup() {
   }
   
   int z=0;
-    for (int k=0;k<numPeople-1;k++) {
-      if (z < numPeople) {
-        for (int l=0;l<numPeople;l++) {
-          newPersonSpringArray[z] = new VerletConstrainedSpring2D(person[l], person[k], int(random(250, 650)), random(0.001, 0.003));
-          physics.addSpring(newPersonSpringArray[z]);
-          z++;
-        }
+  for (int k=0;k<numPeople-1;k++) {
+    if (z < numPeople) {
+      for (int l=0;l<numPeople;l++) {
+        newPersonSpringArray[z] = new VerletConstrainedSpring2D(person[l], person[k], int(random(250, 650)), random(0.001, 0.003));
+        physics.addSpring(newPersonSpringArray[z]);
+        z++;
       }
     }
+  }
   
   int nationSpringArrayCount = 0;
   for (int i=0;i<numPeople;i++) {
