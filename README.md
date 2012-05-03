@@ -1,5 +1,7 @@
 # Genetic Crossings
+
 Ben Turner ([@Xeus](http://twitter.com/Xeus))
+
 Nature of Code Final Project, Spring 2012, Prof. Daniel Shiffman
 
 Project for my NYU ITP Introduction to Computational Media/Nature of Code classes.
@@ -10,7 +12,7 @@ Intended to create the building blocks for a system of people with randomly gene
 characteristics who age, breed, pass along genetic information to offspring, and
 interact with their environments, religious traits, and governments/cultures.
 
-Coded in Processing.  Run "genetic_crossing_toxiclibs.pde" in Processing to view the sketch.  Also uses a node.js express server.
+Coded in Processing.  Also uses a node.js express server.
 
 Repo includes back sketches as well as a Wolfram CA sketch and the node.js express JSON server which are also used for this sketch.
 
@@ -25,15 +27,15 @@ Most recent code uses these directories: `genetic_crossing_noc_final`, `WolframC
 
 ### Quick Way
 
-Download these files and run them on your system; they're already built as applications.
+Download these files (if you didn't just `git clone git@github.com:Xeus/Genetic-Crossing.git` the whole directory and run them on your system; they're already built as applications.
 
 MacOSX:
-- 
-- 
+- https://github.com/Xeus/Genetic-Crossing/tree/master/genetic_crossing_noc_final/application.macosx
+- https://github.com/Xeus/Genetic-Crossing/tree/master/WolframCA_test/application.macosx
 
 Windows:
-- 
-- 
+- https://github.com/Xeus/Genetic-Crossing/tree/master/genetic_crossing_noc_final/application.windows
+- https://github.com/Xeus/Genetic-Crossing/tree/master/WolframCA_test/application.windows
 
 ### Native Way
 
